@@ -30,9 +30,7 @@ def get_random_list(l):
 def students_in_groups(students: list, groups: list):
     ful_groups = {}
     groups, empty_groups =get_random_list(groups)
-    # students, students_without_groups = get_random_list(students)
     for group in groups:
-        # ful_groups[group] = [student for student in students]
         students_list = []
         if students:
             for _ in range(random.randint(10, 30)):

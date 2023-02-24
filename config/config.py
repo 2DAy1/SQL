@@ -1,5 +1,0 @@
-DB = "postgresql"
-USER = "user"
-PASSWORD = "qwerty"
-HOST = "localhost"
-DB_NAME = "database.db"

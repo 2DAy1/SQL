@@ -1,1 +1,1 @@
-from .config import *
+from .default_settings import *

@@ -21,7 +21,7 @@ def get_students():
 
 def get_random_list(l):
     random_items_list = []
-    for i in range(random.randint(0, 3)):
+    for i in range(random.randint(1, 3)):
         random_items_list.append(l[i])
         del l[i]
     return l, random_items_list

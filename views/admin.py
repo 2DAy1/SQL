@@ -1,11 +1,14 @@
 from flask import Blueprint, current_app, render_template
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
 
 
 engine = create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
+Session = sessionmaker(bind=engine)
+session = Session()
 if not database_exists(engine.url):
     create_database(engine.url)
 

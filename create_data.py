@@ -3,7 +3,7 @@ import string
 import names
 
 
-def get_groups():
+def create_groups():
     groups = []
     for _ in range(10):
         letters = ""
@@ -15,34 +15,39 @@ def get_groups():
     return groups
 
 
-def get_students():
+def create_students():
     return [names.get_full_name() for _ in range(200)]
 
 
-def get_random_list(l):
-    random_items_list = []
-    for i in range(random.randint(1, 3)):
-        random_items_list.append(l[i])
-        del l[i]
-    return l, random_items_list
+def create_courses():
+    return ['Math', 'Biology', 'Chemistry', 'Physics', 'History', 'Geography', 'Literature', 'Art', 'Music',
+            'Computer Science']
+
+def asign_students_courses(students: list, courses):
+    student_courses = {}
+    for student in students:
+        num_courses = random.randint(1, 3)
+        courses_assigned = random.sample(courses, num_courses)
+        student_courses[student] = courses_assigned
+    return student_courses
 
 
-def students_in_groups(students: list, groups: list):
-    ful_groups = {}
-    groups, empty_groups =get_random_list(groups)
-    for group in groups:
-        students_list = []
-        if students:
-            for _ in range(random.randint(10, 30)):
-                student = students[random.randint(0, len(students)-1)]
-                students_list.append(student)
-                students.remove(student)
-        ful_groups[group] = students_list
-    if students:
-        print(students)
-    print(empty_groups)
-    return ful_groups
+def students_in_groups(students: dict, groups: list):
+    group_assignments = {}
+    for student in students:
+        group = random.choice(groups)
+        if group not in group_assignments:
+            group_assignments[group] = {}
+        group_assignments[group][student] = students[student]
+    return group_assignments
 
 
-for i in students_in_groups(get_students(), get_groups()).items():
-    print(i)
+
+
+
+students = asign_students_courses(create_students(), create_courses())
+groups = students_in_groups(students,create_groups())
+print(students)
+print(groups)
+
+

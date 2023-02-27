@@ -1,0 +1,36 @@
+parameters:
+  - name: format
+    in: query
+    type: string
+    enum: ['json','xml']
+    required: true
+    default: json
+  - name: order
+    in: query
+    type: string
+    enum: ['desc','ask']
+    default: desc
+definitions:
+  Student:
+    type: object
+    properties:
+      student_id:
+        type: int
+        example: 1
+      first_name:
+        type: string
+        example: Dan
+      last_name:
+        type: string
+        example: Dol
+      group_id:
+        type: int
+        example: 1
+responses:
+  200:
+    description: A list of Drivers
+    content:
+      schema:
+        $ref: '#/definitions/Course'
+
+

@@ -1,24 +1,22 @@
-from flask import Blueprint, current_app, render_template
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils import database_exists, create_database
+from flask import Blueprint, jsonify
+from Py_app import db
+
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
 
 
-engine = create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
-Session = sessionmaker(bind=engine)
-session = Session()
-if not database_exists(engine.url):
-    create_database(engine.url)
+@admin.route('/groups')
+def get_groups():
+    groups = db.Group.query.all()
+    return jsonify([group.to_dict() for group in groups])
 
-with engine.connect() as con:
-    con.execute(f"CREATE USER {current_app.config.from_envvar['USER']} "
-                f"WITH PASSWORD {current_app.config.from_envvar['PASSWORD']}")
-    con.execute(f"GRANT ALL PRIVILEGES ON DATABASE {current_app.config.from_envvar['DB_NAME']} TO "
-                f"{current_app.config.from_envvar['USER']}")
+@admin.route('/courses')
+def get_courses():
+    courses = db.Course.query.all()
+    return jsonify([course.to_dict() for course in courses])
 
 
-@admin.route('/')
-def index():
-    return render_template(current_app.config['INDEX_TEMPLATE'])
+@admin.route('/students')
+def get_students():
+    students = db.Student.query.all()
+    return jsonify([student.to_dict() for student in students])

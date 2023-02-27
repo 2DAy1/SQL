@@ -3,6 +3,8 @@ import string
 import names
 
 
+# Generate test data:
+
 def create_groups():
     groups = []
     for _ in range(10):
@@ -23,6 +25,7 @@ def create_courses():
     return ['Math', 'Biology', 'Chemistry', 'Physics', 'History', 'Geography', 'Literature', 'Art', 'Music',
             'Computer Science']
 
+
 def asign_students_courses(students: list, courses):
     student_courses = {}
     for student in students:
@@ -32,22 +35,17 @@ def asign_students_courses(students: list, courses):
     return student_courses
 
 
-def students_in_groups(students: dict, groups: list):
+def students_in_groups():
+    students_course = asign_students_courses(create_students(), create_courses())
+    groups = create_groups()
+
     group_assignments = {}
-    for student in students:
+    for student in students_course:
         group = random.choice(groups)
         if group not in group_assignments:
             group_assignments[group] = {}
-        group_assignments[group][student] = students[student]
+        group_assignments[group][student] = students_course[student]
     return group_assignments
 
 
-
-
-
-students = asign_students_courses(create_students(), create_courses())
-groups = students_in_groups(students,create_groups())
-print(students)
-print(groups)
-
-
+data = students_in_groups()

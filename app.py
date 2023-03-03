@@ -1,4 +1,4 @@
-from create_db import create_db
+from create_db import create_db_with_user
 from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -15,16 +15,10 @@ def create_app():
     # get db
     from Py_app import db
     db.init_app(app)
-    with app.app_context():
-        create_db(engine)
-        db.create_all()
 
-    # create user. Assign all privileges on the database to the user.
-    with engine.connect() as con:
-        con.execute(f"CREATE USER {app.config.from_envvar['USER']} "
-                    f"WITH PASSWORD {app.config.from_envvar['PASSWORD']}")
-        con.execute(f"GRANT ALL PRIVILEGES ON DATABASE {app.config.from_envvar['DB_NAME']} TO "
-                    f"{app.config.from_envvar['USER']}")
+    with app.app_context():
+        create_db_with_user(engine)
+        db.create_all()
 
     # include test data in db
 
@@ -34,7 +28,6 @@ def create_app():
 
     from views import admin
     app.register_blueprint(admin)
-
 
     return app
 

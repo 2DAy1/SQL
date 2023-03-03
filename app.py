@@ -1,4 +1,4 @@
-
+from create_db import create_db
 from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -16,6 +16,7 @@ def create_app():
     from Py_app import db
     db.init_app(app)
     with app.app_context():
+        create_db(engine)
         db.create_all()
 
     # create user. Assign all privileges on the database to the user.

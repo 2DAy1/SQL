@@ -17,8 +17,8 @@ def get_students(order):
             c_db = Student.select().order_by(Student.id[::-1])
         students = {}
         for students in c_db:
-            students[students.student_id] = [students.student_id, students.first_name, students.last_name,
-                                             students.group_id]
+            students[students.id] = [students.id, students.first_name, students.last_name,
+                                     students.id]
     return students
 
 

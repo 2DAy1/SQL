@@ -22,7 +22,7 @@ def create_app():
 
     # include test data in db
 
-    # create api with bluprint admin
+    # create api with blueprint admin
     from api import create_api
     create_api(app)
 

@@ -1,2 +1,2 @@
-from .models import db, Student
+from .models import *
 

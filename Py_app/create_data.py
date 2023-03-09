@@ -1,7 +1,8 @@
+from .models import db, GroupModel, CourseModel, StudentModel
 import random
 import string
 import names
-from models import db, GroupModel, CourseModel, StudentModel
+
 
 
 # Generate test data:
@@ -29,7 +30,8 @@ def create_students():
 
 def generate_courses():
     courses = []
-    for name in ["Math", "Biology", "Chemistry", "Physics", "History", "Art", "Music", "Physical Education", "Computer Science", "English"]:
+    for name in ["Math", "Biology", "Chemistry", "Physics", "History", "Art", "Music", "Physical Education",
+                 "Computer Science", "English"]:
         course = CourseModel(name=name, description=f"Description for {name}")
         courses.append(course)
     return courses
@@ -47,8 +49,9 @@ def students_in_groups():
             student.group = group
     return groups
 
-
-
+def create_all_tables():
+    students_in_groups()
+    generate_courses()
 
 if __name__ == "__main__":
     for i in students_in_groups():

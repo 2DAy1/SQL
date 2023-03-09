@@ -1,2 +1,2 @@
-from .models import db, Student
-from .create_data import data
+from .models import *
+from .create_data import *

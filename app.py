@@ -1,7 +1,10 @@
+import click
+from Py_app import *
 from create_db import create_db_with_user
 from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from flask.cli import with_appcontext
 
 
 def create_app():
@@ -12,26 +15,29 @@ def create_app():
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # get db
-    from Py_app import db
     db.init_app(app)
 
     with app.app_context():
         create_db_with_user(engine)
-        db.create_all()
-
+    # get db
+    app.cli.command(create)
     # include test data in db
 
     # create api with blueprint admin
     from api import create_api
     create_api(app)
 
-    from views import admin
-    app.register_blueprint(admin)
-
     return app
 
 
+@click.command(name='run')
+@with_appcontext
+def create():
+    db.create_all()
+    click.echo('Database tables created!')
+
+    create_all_tables()
+    click.echo('Database get data')
 
 if __name__ == '__main__':
     create_app().run(debug=True)

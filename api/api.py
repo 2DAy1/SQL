@@ -2,7 +2,7 @@ import json
 from flask_restful import Api
 from flask import jsonify, make_response, config, current_app, Blueprint
 from flask_restful import Resource, request
-from Py_app import db, Student
+from Py_app import db, StudentModel
 from dicttoxml import dicttoxml
 from flasgger import swag_from
 
@@ -12,9 +12,9 @@ from flasgger import swag_from
 def get_students(order):
     with db:
         if order == 'desc':
-            c_db = Student.select().order_by(Student.id)
+            c_db = StudentModel.select().order_by(StudentModel.id)
         elif order == 'ask':
-            c_db = Student.select().order_by(Student.id[::-1])
+            c_db = StudentModel.select().order_by(StudentModel.id[::-1])
         students = {}
         for students in c_db:
             students[students.id] = [students.id, students.first_name, students.last_name,

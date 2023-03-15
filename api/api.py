@@ -1,12 +1,10 @@
 import json
 from flask_restful import Api
 from flask import jsonify, make_response, config, current_app, Blueprint
-from flask_restful import Resource, request
-from Py_app import db, StudentModel
+from flask_restful import Resource, request, marshal_with, fields
+from Py_app import db, StudentModel, GroupModel, CourseModel
 from dicttoxml import dicttoxml
 from flasgger import swag_from
-
-
 
 
 def get_students(order):
@@ -49,6 +47,47 @@ class StudentList(Resource):
                 raise ValueError("format != json or xml")
 
             return response
+
+
+class Students(Resource):
+    def get(self):
+        return StudentModel.query.all()
+
+    def post(self):
+        data = request.json
+        student = StudentModel(
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+        )
+        db.session.add(student)
+        db.session.commit()
+
+        return StudentModel.quary.all()
+
+
+class Student(Resource):
+    def get(self, first_name):
+        return StudentModel.query.filter_by(name=first_name).first()
+
+
+class Groups(Resource):
+    def get(self):
+        return GroupModel.query.all()
+
+
+class Group(Resource):
+    def get(self, name):
+        return GroupModel.query.filter_by(name=name).first()
+
+
+class Courses(Resource):
+    def get(self):
+        return CourseModel.query.all()
+
+
+class Course(Resource):
+    def get(self, name):
+        return CourseModel.query.filter_by(name=name).first()
 
 
 def create_api(app):

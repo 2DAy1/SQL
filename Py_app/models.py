@@ -24,18 +24,7 @@ class GroupModel(db.Model):
     def __repr__(self):
         return f"<Group {self.name}>"
 
-    def create(self):
-        db.session.add(self)
-        db.session.commit()
 
-    def read(self):
-        return GroupModel.query.filter_by(id=self.id).first()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
 
 
 class StudentModel(db.Model):
@@ -56,19 +45,7 @@ class StudentModel(db.Model):
     def __repr__(self):
         return f"<Student {self.first_name} {self.last_name}>"
 
-    def create(self):
-        db.session.add(self)
-        db.session.commit()
 
-    def read(self):
-        return StudentModel.query.filter_by(id=self.id).first()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
 
 
 class CourseModel(db.Model):
@@ -83,19 +60,7 @@ class CourseModel(db.Model):
     def __repr__(self):
         return f"<Course {self.name}>"
 
-    def create(self):
-        db.session.add(self)
-        db.session.commit()
 
-    def read(self):
-        return CourseModel.query.filter_by(id=self.id).first()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
 
 
 

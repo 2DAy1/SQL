@@ -23,7 +23,7 @@ def create_app():
     app.cli.command(create)
     # include test data in db
 
-    # create api with blueprint admin
+    # create api
     from api import create_api
     create_api(app)
 

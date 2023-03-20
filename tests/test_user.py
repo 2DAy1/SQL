@@ -1,5 +1,5 @@
 from flask import User
-from Py_app.models import db
+from create_db.models import db
 import pytest
 
 @pytest.mark.fixture

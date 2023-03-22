@@ -85,10 +85,35 @@ class Students(Resource):
         return StudentModel.quary.all()
 
 
+
+
 class Student(Resource):
     @marshal_with(studentFields)
     def get(self, pk):
-        return StudentModel.query.filter_by(id=pk).first()
+        student = StudentModel.query.filter_by(id=pk).first()
+        if not student:
+            return {'message': 'Student not found'}, 404
+        return student
+
+    @marshal_with(studentFields)
+    def put(self, pk):
+        student = StudentModel.query.filter_by(id=pk).first()
+        if not student:
+            return {'message': 'Student not found'}, 404
+        data = request.json
+        student.first_name = data.get('first_name', student.first_name)
+        student.last_name = data.get('last_name', student.last_name)
+        student.group_id = data.get('group_id', student.group_id)
+        db.session.commit()
+        return student
+
+    def delete(self, pk):
+        student = StudentModel.query.filter_by(id=pk).first()
+        if not student:
+            return {'message': 'Student not found'}, 404
+        db.session.delete(student)
+        db.session.commit()
+        return student, 204
 
 
 class Groups(Resource):
@@ -100,7 +125,28 @@ class Groups(Resource):
 class Group(Resource):
     @marshal_with(groupeFields)
     def get(self, pk):
-        return GroupModel.query.filter_by(id=pk).first()
+        group = GroupModel.query.filter_by(id=pk).first()
+        if not group:
+            return {'message': 'Group not found'}, 404
+        return group
+
+    @marshal_with(groupeFields)
+    def put(self, pk):
+        group = GroupModel.query.filter_by(id=pk).first()
+        if not group:
+            return {'message': 'Group not found'}, 404
+        data = request.json
+        group.name = data.get('name', group.name)
+        db.session.commit()
+        return group
+
+    def delete(self, pk):
+        group = GroupModel.query.filter_by(id=pk).first()
+        if not group:
+            return {'message': 'Group not found'}, 404
+        db.session.delete(group)
+        db.session.commit()
+        return group, 204
 
 
 class Courses(Resource):
@@ -113,6 +159,30 @@ class Course(Resource):
     @marshal_with(courseFields)
     def get(self, pk):
         return CourseModel.query.filter_by(id=pk).first()
+
+    @marshal_with(courseFields)
+    def put(self, pk):
+        course = CourseModel.query.filter_by(id=pk).first()
+        if not course:
+            return {'message': 'Course not found'}, 404
+
+        data = request.json
+        if 'name' in data:
+            course.name = data['name']
+        if 'description' in data:
+            course.description = data['description']
+
+        db.session.commit()
+        return course
+
+    def delete(self, pk):
+        course = CourseModel.query.filter_by(id=pk).first()
+        if not course:
+            return {'message': 'Course not found'}, 404
+
+        db.session.delete(course)
+        db.session.commit()
+        return {'message': 'Course deleted'}, 200
 
 
 def create_api(app):

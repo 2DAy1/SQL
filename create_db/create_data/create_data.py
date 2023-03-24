@@ -45,6 +45,7 @@ def students_in_groups(students, groups):
         group_students = random.sample(students, num_students)
         for student in group_students:
             student.group = group
+            student.group_id = group.id
             db.session.add(student)
 
 

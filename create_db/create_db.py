@@ -47,4 +47,5 @@ def create_db(app, engine):
 
     with app.app_context():
         create_db_with_user(engine)
+        # run()
     app.cli.command(run)

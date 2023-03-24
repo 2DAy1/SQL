@@ -6,7 +6,6 @@ from create_db import db, StudentModel, GroupModel, CourseModel
 from dicttoxml import dicttoxml
 from flasgger import swag_from
 
-
 # def get_students(order):
 #     with db:
 #         if order == 'desc':
@@ -49,22 +48,21 @@ from flasgger import swag_from
 #             return response
 
 studentFields = {
-    'id':fields.Integer,
-    'first_name':fields.String,
-    'last_name':fields.String,
+    'id': fields.Integer,
+    'first_name': fields.String,
+    'last_name': fields.String,
     'group_id': fields.Integer
 }
 
-
 courseFields = {
-    'id':fields.Integer,
-    'name':fields.String,
-    'description':fields.String
+    'id': fields.Integer,
+    'name': fields.String,
+    'description': fields.String
 }
 
 groupeFields = {
-    'id':fields.Integer,
-    'name':fields.String,
+    'id': fields.Integer,
+    'name': fields.String,
 }
 
 
@@ -73,6 +71,7 @@ class Students(Resource):
     def get(self):
         return StudentModel.query.all()
 
+    @marshal_with(studentFields)
     def post(self):
         data = request.json
         student = StudentModel(
@@ -83,8 +82,6 @@ class Students(Resource):
         db.session.commit()
 
         return StudentModel.quary.all()
-
-
 
 
 class Student(Resource):
@@ -107,6 +104,7 @@ class Student(Resource):
         db.session.commit()
         return student
 
+    @marshal_with(studentFields)
     def delete(self, pk):
         student = StudentModel.query.filter_by(id=pk).first()
         if not student:
@@ -140,6 +138,7 @@ class Group(Resource):
         db.session.commit()
         return group
 
+    @marshal_with(groupeFields)
     def delete(self, pk):
         group = GroupModel.query.filter_by(id=pk).first()
         if not group:
@@ -175,6 +174,7 @@ class Course(Resource):
         db.session.commit()
         return course
 
+    @marshal_with(courseFields)
     def delete(self, pk):
         course = CourseModel.query.filter_by(id=pk).first()
         if not course:
@@ -185,13 +185,60 @@ class Course(Resource):
         return {'message': 'Course deleted'}, 200
 
 
+class CourseStudents(Resource):
+    @marshal_with(studentFields)
+    def get(self, pk):
+        course = CourseModel.query.filter_by(id=pk).first()
+        if not course:
+            return {'message': 'Course not found'}, 404
+        return course.students
+
+    @marshal_with(courseFields)
+    def post(self, pk):
+        data = request.json
+        student_id = data.get('student_id')
+        course = CourseModel.query.filter_by(id=pk).first()
+        student = StudentModel.query.filter_by(id=student_id).first()
+        if not course or not student:
+            return {'message': 'Course or student not found'}, 404
+        if student in course.students:
+            return {'message': 'Student already enrolled in course'}, 409
+        course.students.append(student)
+        db.session.commit()
+        return course
+
+    def delete(self, pk):
+        data = request.json
+        student_id = data.get('student_id')
+        course = CourseModel.query.filter_by(id=pk).first()
+        student = StudentModel.query.filter_by(id=student_id).first()
+        if not course or not student:
+            return {'message': 'Course or student not found'}, 404
+        if student not in course.students:
+            return {'message': 'Student not enrolled in course'}, 409
+        course.students.remove(student)
+        db.session.commit()
+        return course
+
+
 def create_api(app):
     api = Api(app)
-    api.add_resource(Students, '/students')
-    api.add_resource(Student, '/students/<int:pk>')
-    api.add_resource(Courses, '/courses')
-    api.add_resource(Course, '/courses/<int:pk>')
-    api.add_resource(Groups, '/groups')
-    api.add_resource(Group, '/groups/<int:pk>')
+
+    api_resources = [
+        (Students, '/students'),
+        (Student, '/students/<int:pk>'),
+        (Courses, '/courses'),
+        (Course, '/courses/<int:pk>'),
+        (Groups, '/groups'),
+        (Group, '/groups/<int:pk>'),
+        (CourseStudents, '/courses_id/<int:pk>')
+    ]
+
+    for res, url in api_resources:
+        api.add_resource(res, url)
     api.init_app(app)
     return api
+
+
+if __name__ == '__main__':
+    print('finish')

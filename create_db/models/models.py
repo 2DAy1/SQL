@@ -14,10 +14,11 @@ class GroupModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column('name', db.String)
 
-    students = db.relationship("StudentModel", back_populates="groups")
+    students = db.relationship("StudentModel", back_populates="group")
 
     def __repr__(self):
-        return f"<Group {self.name}> "
+        student_names = ",\n".join([f"{student.first_name} {student.last_name}" for student in self.students])
+        return f"<Group {self.name}: {student_names}>"
 
 
 
@@ -30,8 +31,8 @@ class StudentModel(db.Model):
     last_name = db.Column('last_name', db.String(100))
     group_id = db.Column(db.Integer, ForeignKey('groups.id'))
 
-    groups = db.relationship("GroupModel", back_populates="students")
-    courses = relationship("CourseModel", secondary='student_courses', back_populates="students")
+    group = db.relationship("GroupModel", uselist=False)
+    courses = db.relationship("CourseModel", secondary='student_courses', back_populates="students")
 
 
     def __repr__(self):

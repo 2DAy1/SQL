@@ -4,9 +4,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
-def create_app():
+def create_app(config_filename='config/default_settings.py'):
     app = Flask(__name__)
-    app.config.from_object('config')
+
+    app.config.from_pyfile(config_filename)
 
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 

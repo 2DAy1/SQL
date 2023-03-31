@@ -6,46 +6,6 @@ from create_db import db, StudentModel, GroupModel, CourseModel
 from dicttoxml import dicttoxml
 from flasgger import swag_from
 
-# def get_students(order):
-#     with db:
-#         if order == 'desc':
-#             c_db = StudentModel.select().order_by(StudentModel.id)
-#         elif order == 'ask':
-#             c_db = StudentModel.select().order_by(StudentModel.id[::-1])
-#         students = {}
-#         for student in c_db:
-#             students[student.id] = [student.id, student.first_name, student.last_name,
-#                                      student.id]
-#     return students
-#
-#
-# class StudentList(Resource):
-#
-#     @swag_from('static/student.yml')
-#     def get(self):
-#
-#         lis_format = request.args.get('format', default='json')
-#         order = request.args.get('order', default="desc")
-#
-#         if lis_format or order:
-#
-#             if order == "desc" or order == "ask":
-#                 students = get_students(order)
-#             else:
-#                 raise ValueError("order != desc or order != ask")
-#
-#             # get format
-#             students_json = json.dumps(students, indent=2)
-#             response = make_response(students_json)
-#             response.headers["content-type"] = "application/json"
-#             if lis_format == 'xml':
-#                 students_xml = dicttoxml(students, attr_type=False)
-#                 response = make_response(students_xml)
-#                 response.headers['content-type'] = 'application/xml'
-#             elif lis_format != 'json':
-#                 raise ValueError("format != json or xml")
-#
-#             return response
 
 studentFields = {
     'id': fields.Integer,
@@ -81,7 +41,7 @@ class Students(Resource):
         db.session.add(student)
         db.session.commit()
 
-        return StudentModel.quary.all()
+        return student, 201
 
 
 class Student(Resource):
@@ -119,6 +79,19 @@ class Groups(Resource):
     def get(self):
         return GroupModel.query.all()
 
+    @marshal_with(groupeFields)
+    def post(self):
+        data = request.json
+        group = GroupModel(
+            name=data['name'],
+
+        )
+        db.session.add(group)
+        db.session.commit()
+
+        return group, 201
+
+
 
 class Group(Resource):
     @marshal_with(groupeFields)
@@ -152,6 +125,17 @@ class Courses(Resource):
     @marshal_with(courseFields)
     def get(self):
         return CourseModel.query.all()
+
+    def post(self):
+        data = request.json
+        course = CourseModel(
+            name=data['name'],
+            description=data['description']
+        )
+        db.session.add(course)
+        db.session.commit()
+
+        return course, 201
 
 
 class Course(Resource):
@@ -207,6 +191,7 @@ class CourseStudents(Resource):
         db.session.commit()
         return course
 
+    @marshal_with(courseFields)
     def delete(self, pk):
         data = request.json
         student_id = data.get('student_id')
@@ -222,7 +207,8 @@ class CourseStudents(Resource):
 
 
 def create_api(app):
-    api = Api(app)
+    api_bp = Blueprint('api', __name__)
+    api = Api(api_bp)
 
     api_resources = [
         (Students, '/students'),
@@ -236,9 +222,10 @@ def create_api(app):
 
     for res, url in api_resources:
         api.add_resource(res, url)
-    api.init_app(app)
-    return api
+
+    app.register_blueprint(api_bp, url_prefix='/api/v1')
 
 
-if __name__ == '__main__':
-    print('finish')
+
+
+
